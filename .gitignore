@@ -17,8 +17,10 @@ ENV/
 .coverage
 htmlcov/
 
-# Local Databases (untracked SQLite instances)
-data/processed/*.db
+# Local Databases (track seed warehouse, ignore temporary journals)
+data/processed/*.db-journal
+data/processed/*.db-wal
+data/processed/*.db-shm
 
 # IDE and OS files
 .vscode/

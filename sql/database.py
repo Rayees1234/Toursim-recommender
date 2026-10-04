@@ -17,10 +17,32 @@ MYSQL_USER = os.getenv("MYSQL_USER", "root")
 MYSQL_PASSWORD = os.getenv("MYSQL_PASSWORD", "")
 MYSQL_DATABASE = os.getenv("MYSQL_DATABASE", "tourism_dmdw")
 
-SQLITE_PATH = os.getenv(
-    "SQLITE_PATH",
-    os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "processed", "tourism_dw.db")
-)
+def _resolve_sqlite_path():
+    env_path = os.getenv("SQLITE_PATH")
+    if env_path:
+        return env_path
+
+    bundled_path = os.path.join(
+        os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+        "data", "processed", "tourism_dw.db"
+    )
+
+    # In serverless environments like Vercel, copy seed database to writable /tmp
+    if os.getenv("VERCEL") or os.environ.get("AWS_LAMBDA_FUNCTION_NAME"):
+        tmp_path = "/tmp/tourism_dw.db"
+        if not os.path.exists(tmp_path) and os.path.exists(bundled_path):
+            try:
+                import shutil
+                shutil.copyfile(bundled_path, tmp_path)
+            except Exception:
+                pass
+        if os.path.exists(tmp_path):
+            return tmp_path
+
+    return bundled_path
+
+
+SQLITE_PATH = _resolve_sqlite_path()
 
 
 class DatabaseAdapter:
