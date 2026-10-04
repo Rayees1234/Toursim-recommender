@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tourism Data Warehouse & Data Mining System (DMDW)</title>
+  <!-- Google Fonts & FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+  <!-- Sidebar Navigation -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-icon">
+        <i class="fa-solid fa-compass"></i>
+      </div>
+      <div class="brand-text">
+        <h1>TOURISM DW</h1>
+        <span>DMDW System</span>
+      </div>
+    </div>
+
+    <nav class="nav-menu">
+      <div class="nav-section-title">Core Warehouse</div>
+      <a class="nav-item active" data-tab="dashboard-tab">
+        <i class="fa-solid fa-chart-pie"></i>
+        <span>Executive Dashboard</span>
+      </a>
+      <a class="nav-item" data-tab="analytics-tab">
+        <i class="fa-solid fa-chart-line"></i>
+        <span>Tourism Analytics</span>
+      </a>
+      <a class="nav-item" data-tab="warehouse-tab">
+        <i class="fa-solid fa-database"></i>
+        <span>Data Warehouse</span>
+      </a>
+      <a class="nav-item" data-tab="olap-tab">
+        <i class="fa-solid fa-cubes"></i>
+        <span>OLAP Operations</span>
+      </a>
+
+      <div class="nav-section-title">Data Mining & ML</div>
+      <a class="nav-item" data-tab="segmentation-tab">
+        <i class="fa-solid fa-people-group"></i>
+        <span>K-Means Segmentation</span>
+      </a>
+      <a class="nav-item" data-tab="rules-tab">
+        <i class="fa-solid fa-diagram-project"></i>
+        <span>Association Rules</span>
+      </a>
+      <a class="nav-item" data-tab="classification-tab">
+        <i class="fa-solid fa-brain"></i>
+        <span>Spend Classification</span>
+      </a>
+      <a class="nav-item" data-tab="outliers-tab">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+        <span>Outlier Detection</span>
+      </a>
+      <a class="nav-item" data-tab="trends-tab">
+        <i class="fa-solid fa-arrow-trend-up"></i>
+        <span>Trends & Seasonality</span>
+      </a>
+      <a class="nav-item" data-tab="recommender-tab">
+        <i class="fa-solid fa-wand-magic-sparkles"></i>
+        <span>Trip Recommender</span>
+      </a>
+
+      <div class="nav-section-title">Catalogue & System</div>
+      <a class="nav-item" data-tab="destinations-tab">
+        <i class="fa-solid fa-map-location-dot"></i>
+        <span>Destination Master</span>
+      </a>
+      <a class="nav-item" data-tab="about-tab">
+        <i class="fa-solid fa-circle-info"></i>
+        <span>Project & Viva Notes</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="db-badge">
+        <span>Engine: <strong id="db-engine-badge">DETECTING...</strong></span>
+        <div class="db-pulse"></div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Application Wrapper -->
+  <div class="main-wrapper">
+    <!-- Topbar with Global Interactive Filters -->
+    <header class="topbar">
+      <div class="page-title">
+        <h2 id="current-view-title">Executive Dashboard</h2>
+      </div>
+
+      <div class="filter-bar">
+        <select id="filter-region" class="filter-select">
+          <option value="All">All Regions</option>
+        </select>
+        <select id="filter-access" class="filter-select">
+          <option value="All">All Accessibility</option>
+        </select>
+        <button id="btn-apply-filters" class="btn-primary">
+          <i class="fa-solid fa-filter"></i> Apply Filters
+        </button>
+        <button id="btn-reset-filters" class="btn-secondary">
+          <i class="fa-solid fa-rotate-left"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="content-body">
+
+      <!-- ============================================================= -->
+      <!-- TAB 1: EXECUTIVE DASHBOARD -->
+      <!-- ============================================================= -->
+      <section id="dashboard-tab" class="tab-content active">
+        <!-- Clay Hero Band (7/5 Grid with 3D Claymation Artifact) -->
+        <div class="hero-band">
+          <div class="hero-text">
+            <div class="feature-tag" style="display: inline-flex; align-items: center; gap: 6px; margin-bottom: 14px; background: rgba(10, 10, 10, 0.06); color: var(--ink);">
+              <i class="fa-solid fa-cube"></i> DMDW Analytics Platform
+            </div>
+            <h2>Intelligent Analytics for Indian Tourism</h2>
+            <p>Comprehensive Star Schema Warehousing, Multidimensional OLAP Cubes, and Machine Learning pipelines powering 100 benchmark tourist destinations across 28 states and union territories.</p>
+            <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+              <button class="btn-primary" onclick="switchTab('olap-tab')">
+                <i class="fa-solid fa-cubes"></i> Explore OLAP Cubes
+              </button>
+              <button class="btn-secondary" onclick="switchTab('recommender-tab')">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> Trip Recommender
+              </button>
+            </div>
+          </div>
+          <div class="hero-illustration-card">
+            <img src="{{ url_for('static', filename='img/clay_hero_travel.jpg') }}" alt="Clay 3D Travel Analytics Landscape">
+          </div>
+        </div>
+
+        <!-- Saturated 6-Color Feature Grid per DESIGN.md -->
+        <div class="feature-grid">
+          <div class="feature-card feature-card-pink">
+            <div class="feature-card-header">
+              <span class="feature-tag">Coverage</span>
+              <i class="fa-solid fa-map-pin"></i>
+            </div>
+            <div class="feature-number" id="feat-dest-count">100</div>
+            <h3>Pan-India Benchmark</h3>
+            <p>Destinations across North, South, East, West, Central & NE regions with 0 dropped rows.</p>
+          </div>
+
+          <div class="feature-card feature-card-teal">
+            <div class="feature-card-header">
+              <span class="feature-tag">Warehouse</span>
+              <i class="fa-solid fa-database"></i>
+            </div>
+            <div class="feature-number">100%</div>
+            <h3>Star Schema Integrity</h3>
+            <p>100 fact snapshots linked across 5 dimensions and 4 many-to-many bridge tables.</p>
+          </div>
+
+          <div class="feature-card feature-card-lavender">
+            <div class="feature-card-header">
+              <span class="feature-tag">Mining</span>
+              <i class="fa-solid fa-brain"></i>
+            </div>
+            <div class="feature-number">5 Engines</div>
+            <h3>Data Mining Algorithms</h3>
+            <p>K-Means clustering, FP-Growth rules, Zero-leakage classifiers, & Isolation Forest.</p>
+          </div>
+
+          <div class="feature-card feature-card-peach">
+            <div class="feature-card-header">
+              <span class="feature-tag">Classifier</span>
+              <i class="fa-solid fa-bullseye"></i>
+            </div>
+            <div class="feature-number">90.0%</div>
+            <h3>Random Forest Accuracy</h3>
+            <p>Predicting Luxury vs Non-Luxury spend without cost leakage on hold-out testing.</p>
+          </div>
+
+          <div class="feature-card feature-card-ochre">
+            <div class="feature-card-header">
+              <span class="feature-tag">Association</span>
+              <i class="fa-solid fa-diagram-project"></i>
+            </div>
+            <div class="feature-number">4.17x</div>
+            <h3>Maximum Rule Lift</h3>
+            <p>FP-Growth discovered strong itemsets linking Heritage, Photography, and Sightseeing.</p>
+          </div>
+
+          <div class="feature-card feature-card-cream">
+            <div class="feature-card-header">
+              <span class="feature-tag">Performance</span>
+              <i class="fa-solid fa-bolt"></i>
+            </div>
+            <div class="feature-number">&lt; 50ms</div>
+            <h3>Dual-Engine Response</h3>
+            <p>MySQL 8.0 & SQLite dual-mode engine serving instant OLAP queries & analytics.</p>
+          </div>
+        </div>
+
+        <!-- Section Header for Live Telemetry -->
+        <div style="margin: 28px 0 16px 0; display: flex; justify-content: space-between; align-items: flex-end;">
+          <div>
+            <h3 style="font-size: 1.25rem; font-weight: 600; color: var(--ink);">Live Warehouse Telemetry</h3>
+            <p style="font-size: 0.85rem; color: var(--muted); margin: 0;">Aggregated dynamically from warehouse fact tables</p>
+          </div>
+          <span class="badge-pill"><i class="fa-solid fa-rotate" style="font-size: 0.75rem; margin-right: 4px;"></i> Live Query</span>
+        </div>
+
+        <!-- KPI Cards Grid -->
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-header">
+              <span class="kpi-label">Destinations</span>
+              <div class="kpi-icon"><i class="fa-solid fa-location-dot"></i></div>
+            </div>
+            <div class="kpi-value" id="kpi-dest-count">--</div>
+            <div class="kpi-subtext" id="kpi-states-count">Across -- States</div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-header">
+              <span class="kpi-label">Avg Daily Spend (Mid)</span>
+              <div class="kpi-icon"><i class="fa-solid fa-indian-rupee-sign"></i></div>
+            </div>
+            <div class="kpi-value" id="kpi-mid-spend">--</div>
+            <div class="kpi-subtext">Budget: <span id="kpi-budget-spend">--</span></div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-header">
+              <span class="kpi-label">Avg Trip Duration</span>
+              <div class="kpi-icon"><i class="fa-solid fa-clock"></i></div>
+            </div>
+            <div class="kpi-value" id="kpi-avg-duration">--</div>
+            <div class="kpi-subtext">Recommended ideal days</div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-header">
+              <span class="kpi-label">Avg Safety Rating</span>
+              <div class="kpi-icon"><i class="fa-solid fa-shield-halved"></i></div>
+            </div>
+            <div class="kpi-value" id="kpi-safety-rating">--</div>
+            <div class="kpi-subtext">On 10-point scale</div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-header">
+              <span class="kpi-label">Most Popular</span>
+              <div class="kpi-icon"><i class="fa-solid fa-award"></i></div>
+            </div>
+            <div class="kpi-value" style="font-size: 1.25rem;" id="kpi-top-dest">--</div>
+            <div class="kpi-subtext">Highest composite score</div>
+          </div>
+        </div>
+
+        <!-- Charts Grid 1 -->
+        <div class="charts-grid-2">
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3>Regional Destination Distribution</h3>
+              <span>Warehouse Geography Rollup</span>
+            </div>
+            <div class="chart-container">
+              <canvas id="chart-region-dist"></canvas>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3>Average Daily Spend Across Tiers (INR ₹)</h3>
+              <span>Budget vs Mid-Range vs Luxury</span>
+            </div>
+            <div class="chart-container">
+              <canvas id="chart-spend-tiers"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Top Destinations Preview Table -->
+        <div class="table-card">
+          <div class="table-header">
+            <h3>Top Ranked Tourist Destinations</h3>
+            <span>Filtered by Current Parameters</span>
+          </div>
+          <table class="data-table" id="table-top-destinations">
+            <thead>
+              <tr>
+                <th>Destination</th>
+                <th>Region</th>
+                <th>State</th>
+                <th>Accessibility</th>
+                <th>Popularity</th>
+                <th>Safety</th>
+                <th>Ideal Days</th>
+                <th>Mid Spend (INR)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td colspan="8" style="text-align: center;">Loading data from warehouse...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ============================================================= -->
+      <!-- TAB 2: TOURISM ANALYTICS -->
+      <!-- ============================================================= -->
+      <section id="analytics-tab" class="tab-content">
+        <div class="charts-grid-2">
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3>Spend Breakdown by Category</h3>
+              <span>Accommodation, Food, Activities, Local Transport</span>
+            </div>
+            <div class="chart-container">
+              <canvas id="chart-category-breakdown"></canvas>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3>Duration vs. Mid-Range Spend Correlation</h3>
+              <span>Scatter of 100 Indian Destinations</span>
+            </div>
+            <div class="chart-container">
+              <canvas id="chart-scatter-duration-spend"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="charts-grid-2">
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3>Safety Rating vs. Popularity Score</h3>
+              <span>Distribution across Accessibility Tiers</span>
+            </div>
+            <div class="chart-container">
+              <canvas id="chart-safety-popularity"></canvas>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3>Airport Proximity vs Altitude</h3>
+              <span>Logistics and Accessibility Profile</span>
+            </div>
+            <div class="chart-container">
+              <canvas id="chart-altitude-airport"></canvas>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================= -->
+      <!-- TAB 3: DATA WAREHOUSE & STAR SCHEMA -->
+      <!-- ============================================================= -->
+      <section id="warehouse-tab" class="tab-content">
+        <div class="insight-banner">
+          <i class="fa-solid fa-circle-nodes"></i>
+          <div>
+            <strong>Star Schema Design & Referential Integrity:</strong>
+            <p>Our warehouse implements a strict star schema with 1 central fact table (<code>fact_destination_metrics</code>), 5 core dimensions (<code>dim_date</code>, <code>dim_geography</code>, <code>dim_destination</code>, <code>dim_connectivity</code>, <code>dim_seasonality</code>), and 4 bridge tables for multi-valued dimensions. 100% referential integrity with zero orphan facts.</p>
+          </div>
+        </div>
+
+        <div class="charts-grid-2">
+          <div class="table-card">
+            <div class="table-header">
+              <h3>Warehouse Table Catalog & Row Counts</h3>
+              <span>Live Database State</span>
+            </div>
+            <table class="data-table" id="table-warehouse-catalog">
+              <thead>
+                <tr>
+                  <th>Table Name</th>
+                  <th>Classification</th>
+                  <th>Row Count</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+
+          <div class="table-card">
+            <div class="table-header">
+              <h3>Table Data Preview</h3>
+              <span id="preview-table-name">Select a table to inspect</span>
+            </div>
+            <div id="table-preview-container" style="overflow-x: auto; max-height: 400px;">
+              <p style="color: var(--text-dim); padding: 20px;">Click 'Preview' on any table in the catalog to view live database rows.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================= -->
+      <!-- TAB 4: OLAP OPERATIONS -->
+      <!-- ============================================================= -->
+      <section id="olap-tab" class="tab-content">
+        <div class="insight-banner">
+          <i class="fa-solid fa-cube"></i>
+          <div>
+            <strong>Online Analytical Processing (OLAP) Query Engine:</strong>
+            <p>Real SQL operations executing dynamically on the warehouse schema: Roll-up along Geography/Time hierarchies, Drill-down into regional subdivisions, Slice on fixed dimensions, Dice across multidimensional constraints, and Dynamic Pivoting.</p>
+          </div>
+        </div>
+
+        <!-- OLAP Controls -->
+        <div class="form-card">
+          <div class="chart-header">
+            <h3>Interactive OLAP Operation Selector</h3>
+            <span>Parameterized execution via API</span>
+          </div>
+          <div class="filter-bar" style="flex-wrap: wrap; margin-top: 14px;">
+            <button class="btn-primary" onclick="loadOlapRollup()">1. Roll-up (Geography)</button>
+            <button class="btn-primary" onclick="loadOlapDrilldown('South India')">2. Drill-down (South India)</button>
+            <button class="btn-primary" onclick="loadOlapSlice('accessibility', 'Easy')">3. Slice (Easy Access)</button>
+            <button class="btn-primary" onclick="loadOlapDice()">4. Dice (North + Safe + Budget)</button>
+            <button class="btn-primary" onclick="loadOlapPivot()">5. Pivot (Region x Access)</button>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <div class="table-header">
+            <h3 id="olap-operation-title">OLAP Results Matrix</h3>
+            <span id="olap-operation-sub">Select an operation above</span>
+          </div>
+          <div id="olap-result-container" style="overflow-x: auto;">
+            <p style="color: var(--text-dim); padding: 14px;">Results will be rendered here...</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================= -->
+      <!-- TAB 5: K-MEANS SEGMENTATION -->
+      <!-- ============================================================= -->
+      <section id="segmentation-tab" class="tab-content">
+        <div class="insight-banner">
+          <i class="fa-solid fa-chart-pie"></i>
+          <div>
+            <strong>Programmatic Destination Segmentation (K-Means Clustering):</strong>
+            <p>Destinations segmented across continuous scaled features (Spend, Duration, Popularity, Safety, Altitude, Airport Distance). Optimal <i>k</i> evaluated via combined Silhouette and Elbow curves. Cluster names are generated programmatically from centroid statistics.</p>
+          </div>
+        </div>
+
+        <!-- Dynamic Cluster Profile Cards -->
+        <div class="cluster-cards-grid" id="cluster-cards-container">
+          <!-- Populated dynamically -->
+        </div>
+
+        <div class="charts-grid-2">
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3>Cluster Scatter Projection (Spend vs. Duration)</h3>
+              <span>Grouped by Assigned Cluster</span>
+            </div>
+            <div class="chart-container">
+              <canvas id="chart-kmeans-scatter"></canvas>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3>K-Selection: Silhouette Score Curve</h3>
+              <span>Evaluation over k ∈ [2, 6]</span>
+            </div>
+            <div class="chart-container">
+              <canvas id="chart-kmeans-silhouette"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <div class="table-header">
+            <h3>Destination Cluster Assignments</h3>
+            <span>Distance to assigned centroid in feature space</span>
+          </div>
+          <table class="data-table" id="table-cluster-assignments">
+            <thead>
+              <tr>
+                <th>Destination</th>
+                <th>Assigned Cluster</th>
+                <th>Centroid Distance</th>
+                <th>Mid Spend (INR)</th>
+                <th>Ideal Days</th>
+                <th>Altitude (m)</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ============================================================= -->
+      <!-- TAB 6: ASSOCIATION RULE MINING -->
+      <!-- ============================================================= -->
+      <section id="rules-tab" class="tab-content">
+        <div class="insight-banner">
+          <i class="fa-solid fa-basket-shopping"></i>
+          <div>
+            <strong>Market Basket Analysis & Association Rules (FP-Growth):</strong>
+            <p>Mined from warehouse bridge tables connecting destinations to trip types, accommodations, activities, and visiting seasons. Trivial rules (Lift ≤ 1.0) are filtered out, and each rule is translated into a plain-English narrative.</p>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <div class="table-header">
+            <h3>Discovered Association Rules</h3>
+            <span>Sorted by Lift and Confidence</span>
+          </div>
+          <table class="data-table" id="table-association-rules">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Antecedents (If)</th>
+                <th>Consequents (Then)</th>
+                <th>Support</th>
+                <th>Confidence</th>
+                <th>Lift</th>
+                <th>Plain-English Rule Narrative</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ============================================================= -->
+      <!-- TAB 7: SUPERVISED CLASSIFICATION -->
+      <!-- ============================================================= -->
+      <section id="classification-tab" class="tab-content">
+        <div class="insight-banner">
+          <i class="fa-solid fa-shield-virus"></i>
+          <div>
+            <strong>Zero-Leakage Spend Tier Classification:</strong>
+            <p>Target: Predicts whether a destination is High-Spend (>= median ₹4,725) or Budget/Moderate based on infrastructure, altitude, logistics, and ratings. <strong>Zero Data Leakage:</strong> all financial and component spend columns are strictly excluded from features.</p>
+          </div>
+        </div>
+
+        <div class="kpi-grid" id="clf-kpi-container">
+          <!-- Model comparison cards populated dynamically -->
+        </div>
+
+        <div class="charts-grid-2">
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3>Model Benchmark Metrics</h3>
+              <span>Accuracy, Precision, Recall, F1-Score, 5-Fold CV</span>
+            </div>
+            <div class="chart-container">
+              <canvas id="chart-clf-benchmark"></canvas>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3>Top Feature Importances (Random Forest)</h3>
+              <span>Gini Impurity Reduction</span>
+            </div>
+            <div class="chart-container">
+              <canvas id="chart-feature-importance"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <div class="table-header">
+            <h3>Confusion Matrix Comparison</h3>
+            <span>Test Set Evaluation (N=20)</span>
+          </div>
+          <div id="confusion-matrix-container" style="display: flex; gap: 24px; flex-wrap: wrap; justify-content: space-around;">
+            <!-- Rendered dynamically -->
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================= -->
+      <!-- TAB 8: OUTLIER & ANOMALY DETECTION -->
+      <!-- ============================================================= -->
+      <section id="outliers-tab" class="tab-content">
+        <div class="insight-banner">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+          <div>
+            <strong>Univariate (IQR) & Multivariate (Isolation Forest) Anomaly Detection:</strong>
+            <p>Identifies statistical anomalies in elevation, safari expenses, extreme luxury spikes, and remote transit distances with exact threshold violations and business rationales.</p>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <div class="table-header">
+            <h3>Flagged Outlier Records</h3>
+            <span>Detected with IQR Bounds and Isolation Forest</span>
+          </div>
+          <table class="data-table" id="table-outliers">
+            <thead>
+              <tr>
+                <th>Destination</th>
+                <th>Detection Method</th>
+                <th>Feature</th>
+                <th>Observed Value</th>
+                <th>Threshold</th>
+                <th>Anomaly Score</th>
+                <th>Contextual Rationale</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ============================================================= -->
+      <!-- TAB 9: TRENDS & SEASONALITY -->
+      <!-- ============================================================= -->
+      <section id="trends-tab" class="tab-content">
+        <div class="insight-banner">
+          <i class="fa-solid fa-arrow-trend-up"></i>
+          <div>
+            <strong>Seasonality Dynamics & Cross-Tier Growth Multipliers:</strong>
+            <p>Analyzes seasonal destination concentration, regional spend growth relative to the national baseline, and cross-tier spend step-up rates from Budget to Mid-Range to Luxury.</p>
+          </div>
+        </div>
+
+        <div class="charts-grid-2">
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3>Optimal Seasonality Distribution</h3>
+              <span>Destination Count by Best Visiting Season</span>
+            </div>
+            <div class="chart-container">
+              <canvas id="chart-season-trends"></canvas>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3>Regional Spend Premium / Discount (%)</h3>
+              <span>Growth relative to national mean daily spend</span>
+            </div>
+            <div class="chart-container">
+              <canvas id="chart-regional-premium"></canvas>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================= -->
+      <!-- TAB 10: DESTINATION CATALOGUE -->
+      <!-- ============================================================= -->
+      <section id="destinations-tab" class="tab-content">
+        <div class="table-card">
+          <div class="table-header">
+            <h3>Complete Indian Tourist Destination Master</h3>
+            <input type="text" id="dest-search" placeholder="Search destination, state, or region..." class="filter-select" style="width: 280px;">
+          </div>
+          <table class="data-table" id="table-all-destinations">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Destination</th>
+                <th>Region</th>
+                <th>State</th>
+                <th>Accessibility</th>
+                <th>Altitude (m)</th>
+                <th>Airport Dist (km)</th>
+                <th>Duration (Days)</th>
+                <th>Mid Spend (INR)</th>
+                <th>Popularity</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ============================================================= -->
+      <!-- TAB 11: PERSONALIZED TRIP RECOMMENDER -->
+      <!-- ============================================================= -->
+      <section id="recommender-tab" class="tab-content">
+        <div class="form-card">
+          <div class="chart-header">
+            <h3>Personalized Tourism Recommender Engine</h3>
+            <span>Content-based matching on budget, duration, season, and travel type</span>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Max Daily Budget (INR ₹)</label>
+              <input type="number" id="rec-budget" class="form-control" value="6000" min="1000" max="50000" step="500">
+            </div>
+            <div class="form-group">
+              <label>Trip Duration (Days)</label>
+              <input type="number" id="rec-duration" class="form-control" value="4" min="1" max="14">
+            </div>
+            <div class="form-group">
+              <label>Preferred Travel Type</label>
+              <select id="rec-type" class="form-control">
+                <option value="Any">Any Travel Style</option>
+                <option value="Beach">Beach</option>
+                <option value="Hill_station">Hill Station</option>
+                <option value="Adventure">Adventure</option>
+                <option value="Heritage">Heritage & Culture</option>
+                <option value="Wildlife">Wildlife / Safari</option>
+                <option value="Spiritual">Spiritual / Pilgrimage</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Preferred Visiting Season</label>
+              <select id="rec-season" class="form-control">
+                <option value="Any">Any Season</option>
+                <option value="Winter">Winter</option>
+                <option value="Summer">Summer</option>
+                <option value="Monsoon">Monsoon</option>
+                <option value="Post-monsoon">Post-Monsoon</option>
+              </select>
+            </div>
+          </div>
+
+          <button id="btn-run-recommender" class="btn-primary" style="padding: 12px 28px;">
+            <i class="fa-solid fa-magnifying-glass"></i> Find Recommended Destinations
+          </button>
+        </div>
+
+        <div id="recommender-results-container" class="cluster-cards-grid">
+          <!-- Populated dynamically -->
+        </div>
+      </section>
+
+      <!-- ============================================================= -->
+      <!-- TAB 12: ABOUT & VIVA PREPARATION -->
+      <!-- ============================================================= -->
+      <section id="about-tab" class="tab-content">
+        <div class="table-card">
+          <div class="table-header">
+            <h3>B.Tech CSE Project Overview & Viva Deliverables</h3>
+            <span>Academic Submission & Technical Documentation</span>
+          </div>
+          <div style="font-size: 0.95rem; line-height: 1.7; color: var(--body);">
+            <h4 style="color: var(--ink); font-size: 1.1rem; margin: 16px 0 6px 0;">1. System Architecture</h4>
+            <p>End-to-end pipeline: Raw JSON datasets (immutable in <code>data/raw/</code>) &rarr; Data Cleaning & Standardization &rarr; Star Schema Warehouse (MySQL 8.0 with SQLite fallback) &rarr; OLAP Query Engine &rarr; Data Mining (K-Means, FP-Growth, Zero-Leakage Classification, Isolation Forest, Trend Analysis) &rarr; Flask REST API &rarr; Dynamic Interactive Dashboard.</p>
+
+            <h4 style="color: var(--ink); font-size: 1.1rem; margin: 20px 0 6px 0;">2. Star Schema & Grain Specification</h4>
+            <p><strong>Fact Grain:</strong> One row per tourist destination observation snapshot (100 rows). Measures include stay duration, physical altitude, transport distances, evaluative ratings, and itemized daily expenditures across Budget, Mid-range, and Luxury tiers. Multi-valued dimensions (trip types, activities, lodging, seasons) are modeled via 1NF bridge tables.</p>
+
+            <h4 style="color: var(--ink); font-size: 1.1rem; margin: 20px 0 6px 0;">3. Data Mining Highlights</h4>
+            <ul style="margin-left: 20px;">
+              <li><strong>K-Means:</strong> Evaluated for k &isin; [2, 6] using Silhouette & Elbow analysis. Cluster names are programmatically generated from centroid coordinates.</li>
+              <li><strong>Association Rules:</strong> Frequent itemsets mined via FP-Growth on multi-valued bridges, filtering trivial rules (Lift &gt; 1.0) and translating to English sentences.</li>
+              <li><strong>Classification:</strong> Compares Random Forest (90.0% accuracy), Logistic Regression, and Decision Trees under a strict <strong>Zero-Leakage policy</strong>.</li>
+              <li><strong>Outlier Detection:</strong> Combines univariate IQR thresholds with multivariate Isolation Forest to identify anomalous travel profiles.</li>
+            </ul>
+
+            <h4 style="color: var(--ink); font-size: 1.1rem; margin: 20px 0 6px 0;">4. Project File Manifest</h4>
+            <p>Documentation files available in <code>docs/</code>: <code>DATA_UNDERSTANDING.md</code>, <code>SCHEMA_DIAGRAM.md</code>, <code>CLEANING_REPORT.md</code>, <code>ASSUMPTIONS.md</code>, <code>VIVA_PREP.md</code>, <code>DEMO_SCRIPT.md</code>.</p>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Warm Cream Page Footer (per DESIGN.md - NOT dark!) -->
+    <footer class="page-footer">
+      <div class="footer-content">
+        <div class="footer-col">
+          <h4>Tourism DW & Mining</h4>
+          <p>An academic and enterprise-grade Data Warehouse & Mining platform analyzing Indian travel patterns, multidimensional cubes, and predictive modeling.</p>
+          <p style="margin-top: 14px; font-size: 0.78rem; color: var(--muted-soft);">Design system inspired by Clay.com &bull; Plain Black &amp; Inter typography &bull; Warm Cream canvas.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Core Warehouse</h4>
+          <ul>
+            <li><a href="#" onclick="switchTab('dashboard-tab'); return false;">Executive Summary</a></li>
+            <li><a href="#" onclick="switchTab('warehouse-tab'); return false;">Star Schema Fact & Dims</a></li>
+            <li><a href="#" onclick="switchTab('olap-tab'); return false;">OLAP Operations</a></li>
+            <li><a href="#" onclick="switchTab('destinations-tab'); return false;">Destination Master</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Data Mining</h4>
+          <ul>
+            <li><a href="#" onclick="switchTab('segmentation-tab'); return false;">K-Means Clusters</a></li>
+            <li><a href="#" onclick="switchTab('rules-tab'); return false;">FP-Growth Association</a></li>
+            <li><a href="#" onclick="switchTab('classification-tab'); return false;">Spend Classifiers</a></li>
+            <li><a href="#" onclick="switchTab('outliers-tab'); return false;">Anomaly Detection</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>System & Docs</h4>
+          <ul>
+            <li><a href="#" onclick="switchTab('about-tab'); return false;">Viva Preparation Guide</a></li>
+            <li><a href="#" onclick="switchTab('recommender-tab'); return false;">Trip Recommender</a></li>
+            <li><a href="#" onclick="switchTab('trends-tab'); return false;">Seasonality & Trends</a></li>
+            <li><a href="#" onclick="location.reload(); return false;">Refresh Warehouse State</a></li>
+          </ul>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Dashboard Client Logic -->
+  <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+</body>
+</html>
